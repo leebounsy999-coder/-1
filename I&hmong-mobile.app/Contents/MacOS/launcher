@@ -1,0 +1,26 @@
+#!/bin/bash
+PROJECT_DIR="/Users/bounsylee/Library/Mobile Documents/com~apple~CloudDocs/My-cloud"
+cd "$PROJECT_DIR" || exit 1
+
+export PATH="/usr/local/bin:/opt/homebrew/bin:$PATH"
+
+if [ -x "/usr/local/bin/node" ]; then
+    NODE_CMD="/usr/local/bin/node"
+elif [ -x "/opt/homebrew/bin/node" ]; then
+    NODE_CMD="/opt/homebrew/bin/node"
+else
+    NODE_CMD="node"
+fi
+
+# Check if port 3000 is running
+if ! lsof -ti -sTCP:LISTEN :3000 &>/dev/null; then
+    nohup "$NODE_CMD" server.js > /dev/null 2>&1 &
+    sleep 1.2
+fi
+
+# Try launching Chrome in App Mode for dedicated clean window
+if [ -d "/Applications/Google Chrome.app" ]; then
+    open -na "Google Chrome" --args --app="http://localhost:3000"
+else
+    open "http://localhost:3000"
+fi
